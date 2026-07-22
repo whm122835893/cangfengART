@@ -1,0 +1,201 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes swing {
+  0%, 100% { transform: rotateY(-30deg); }
+  50% { transform: rotateY(30deg); }
+}
+
+.animate-swing {
+  animation: swing 6s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+
+:root {
+  font-family: 'PingFang SC', 'Roboto', 'Helvetica Neue', sans-serif;
+  line-height: 1.5;
+  font-weight: 500;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #e0e5ec;
+  color: #4a5568;
+}
+
+#root {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #e0e5ec;
+}
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Page container */
+.page-container {
+  min-height: 100vh;
+  padding-bottom: 64px;
+}
+
+.page-container-no-nav {
+  min-height: 100vh;
+}
+
+/* ==================== Neumorphism Core ==================== */
+
+/* Raised card/button - convex */
+.neu-raised {
+  background: #e0e5ec;
+  box-shadow: -1px -1px 2px rgba(255, 255, 255, 0.7),
+              1px 1px 2px rgba(174, 186, 204, 0.5);
+  transition: box-shadow 150ms ease, transform 150ms ease;
+}
+
+/* Pressed/active - concave */
+.neu-pressed {
+  background: #e0e5ec;
+  box-shadow: inset -1px -1px 2px rgba(255, 255, 255, 0.7),
+              inset 1px 1px 2px rgba(174, 186, 204, 0.5);
+}
+
+/* Input / text field - inset */
+.neu-inset {
+  background: #e0e5ec;
+  box-shadow: inset -1px -1px 2px rgba(255, 255, 255, 0.7),
+              inset 1px 1px 2px rgba(174, 186, 204, 0.5);
+}
+
+/* Flat surface - no shadow, just background */
+.neu-flat {
+  background: #e0e5ec;
+  box-shadow: none;
+}
+
+/* Light variant - slightly lighter bg for cards */
+.neu-raised-light {
+  background: #e8ecf1;
+  box-shadow: -1px -1px 2px rgba(255, 255, 255, 0.8),
+              1px 1px 2px rgba(174, 186, 204, 0.4);
+}
+
+/* Interactive: click → pressed */
+.neu-interactive:active {
+  box-shadow: inset -1px -1px 2px rgba(255, 255, 255, 0.7),
+              inset 1px 1px 2px rgba(174, 186, 204, 0.5);
+  transform: scale(0.97);
+}
+
+/* Accent button - blue neumorphic (主色调) */
+.neu-accent {
+  background: linear-gradient(145deg, #6DB3F2, #4A90D9);
+  box-shadow: -1px -1px 2px rgba(255, 255, 255, 0.7),
+              1px 1px 2px rgba(174, 186, 204, 0.5);
+  color: #ffffff;
+}
+
+.neu-accent:active {
+  background: linear-gradient(145deg, #4A90D9, #6DB3F2);
+  box-shadow: inset -1px -1px 2px rgba(255, 255, 255, 0.7),
+              inset 1px 1px 2px rgba(174, 186, 204, 0.5);
+  transform: scale(0.97);
+}
+
+/* Blue accent (same as neu-accent, explicit name) */
+.neu-accent-blue {
+  background: linear-gradient(145deg, #6DB3F2, #4A90D9);
+  box-shadow: -1px -1px 2px rgba(255, 255, 255, 0.7),
+              1px 1px 2px rgba(174, 186, 204, 0.5);
+  color: #ffffff;
+}
+
+.neu-accent-blue:active {
+  background: linear-gradient(145deg, #4A90D9, #6DB3F2);
+  box-shadow: inset -1px -1px 2px rgba(255, 255, 255, 0.7),
+              inset 1px 1px 2px rgba(174, 186, 204, 0.5);
+  transform: scale(0.97);
+}
+
+/* Orange accent */
+.neu-accent-orange {
+  background: linear-gradient(145deg, #f0b080, #e09060);
+  box-shadow: -1px -1px 2px rgba(255, 255, 255, 0.7),
+              1px 1px 2px rgba(174, 186, 204, 0.5);
+  color: #ffffff;
+}
+
+.neu-accent-orange:active {
+  background: linear-gradient(145deg, #e09060, #f0b080);
+  box-shadow: inset -1px -1px 2px rgba(255, 255, 255, 0.7),
+              inset 1px 1px 2px rgba(174, 186, 204, 0.5);
+  transform: scale(0.97);
+}
+
+/* Green accent */
+.neu-accent-green {
+  background: linear-gradient(145deg, #90cfa0, #70b080);
+  box-shadow: -1px -1px 2px rgba(255, 255, 255, 0.7),
+              1px 1px 2px rgba(174, 186, 204, 0.5);
+  color: #ffffff;
+}
+
+/* Bottom nav active indicator */
+.neu-active-dot {
+  box-shadow: inset -1px -1px 2px rgba(255, 255, 255, 0.7),
+              inset 1px 1px 2px rgba(174, 186, 204, 0.5);
+}
+
+/* Gradient text */
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Flap counter animation */
+@keyframes flapIn {
+  0% { transform: rotateX(90deg); opacity: 0; }
+  100% { transform: rotateX(0deg); opacity: 1; }
+}
+
+.flap-animate {
+  animation: flapIn 0.3s ease-out;
+}
+
+/* Shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Neumorphic divider - subtle shadow line */
+.neu-divider {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6),
+              0 -1px 0 rgba(174, 186, 204, 0.3);
+  height: 1px;
+  background: transparent;
+  border: none;
+}
