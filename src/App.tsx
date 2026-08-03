@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, Component, ReactNode } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import Toast from "@/components/common/Toast";
 import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
@@ -11,6 +12,7 @@ import SupplyPage from "@/pages/SupplyPage";
 import MarketPage from "@/pages/MarketPage";
 import MarketDetailPage from "@/pages/MarketDetailPage";
 import NFTDetailPage from "@/pages/NFTDetailPage";
+import PaymentPage from "@/pages/PaymentPage";
 import DiscoverPage from "@/pages/DiscoverPage";
 import ProfilePage from "@/pages/ProfilePage";
 import AssetsPage from "@/pages/AssetsPage";
@@ -39,7 +41,6 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const setShowAuthModal = useStore((s) => s.setShowAuthModal);
 
   if (!isLoggedIn) {
-    // 触发弹窗
     setTimeout(() => setShowAuthModal(true), 0);
     return <Navigate to="/" replace />;
   }
@@ -47,18 +48,45 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+/** 错误边界：捕获渲染异常，避免白屏 */
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-neu-bg flex flex-col items-center justify-center">
+          <p className="text-lg font-bold text-neu-text-primary mb-2">页面出错了</p>
+          <button
+            onClick={() => window.location.href = '/'}
+            className="px-6 py-2 rounded-full neu-accent-blue text-white font-bold text-sm"
+          >
+            返回首页
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   return (
     <Router>
-      <ScrollToTop />
-      <AuthModal />
-      <Routes>
+      <ErrorBoundary>
+        <ScrollToTop />
+        <AuthModal />
+        <Toast />
+        <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/market" element={<MarketPage />} />
         <Route path="/market/:id" element={<MarketDetailPage />} />
         <Route path="/nft/:id" element={<NFTDetailPage />} />
+        <Route path="/payment/:id" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
         <Route path="/discover" element={<DiscoverPage />} />
         <Route path="/discover/:id" element={<AnnouncementDetailPage />} />
         <Route path="/profile" element={<ProfilePage />} />
@@ -75,7 +103,8 @@ export default function App() {
         <Route path="/invite" element={<ProtectedRoute><InvitePage /></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
         <Route path="/verification" element={<ProtectedRoute><VerificationPage /></ProtectedRoute>} />
-      </Routes>
+        </Routes>
+      </ErrorBoundary>
     </Router>
   );
 }

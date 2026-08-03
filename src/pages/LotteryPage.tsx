@@ -21,6 +21,15 @@ export default function LotteryPage() {
   const [shake, setShake] = useState(false);
   const isVerified = useStore((s) => s.isVerified);
   const setShowVerifyModal = useStore((s) => s.setShowVerifyModal);
+  const lotteryCount = useStore((s) => s.lotteryCount);
+  const lotteryDate = useStore((s) => s.lotteryDate);
+  const drawLottery = useStore((s) => s.drawLottery);
+  const addAsset = useStore((s) => s.addAsset);
+  const showToast = useStore((s) => s.showToast);
+
+  // 今日剩余次数：跨日时重置为 3
+  const today = new Date().toISOString().split('T')[0];
+  const remainingCount = lotteryDate === today ? lotteryCount : 3;
 
   const handleDraw = () => {
     if (!isVerified) {
@@ -28,6 +37,11 @@ export default function LotteryPage() {
       return;
     }
     if (drawing) return;
+    // 扣减抽奖次数，失败则提示
+    if (!drawLottery()) {
+      showToast('今日次数已用完', 'error');
+      return;
+    }
     setDrawing(true);
     setBallDropped(false);
     setShowModal(false);
@@ -51,6 +65,17 @@ export default function LotteryPage() {
       setDrawing(false);
       setResult(selected);
       setBallDropped(true);
+      // 中奖入库（非"谢谢参与"）
+      if (selected.name !== '谢谢参与') {
+        addAsset({
+          nftId: 'lottery_' + Date.now(),
+          name: selected.name,
+          image: '',
+          price: 0,
+          quantity: 1,
+        });
+        showToast('奖品已入库', 'success');
+      }
     }, 2000);
   };
 
@@ -192,7 +217,7 @@ export default function LotteryPage() {
       <div className="mx-4 mt-4">
         <div className="neu-raised rounded-card p-4 flex items-center justify-between">
           <span className="text-sm font-semibold text-neu-text-primary">今日剩余次数</span>
-          <span className="text-lg font-bold text-accent-blue">3</span>
+          <span className="text-lg font-bold text-accent-blue">{remainingCount}</span>
         </div>
       </div>
 

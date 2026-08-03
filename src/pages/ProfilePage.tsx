@@ -43,10 +43,14 @@ export default function ProfilePage() {
   const isVerified = useStore((s) => s.isVerified);
   const logout = useStore((s) => s.logout);
   const setShowAuthModal = useStore((s) => s.setShowAuthModal);
+  const showToast = useStore((s) => s.showToast);
   const [copied, setCopied] = useState<'uid' | 'wallet' | null>(null);
 
   const handleMenuClick = (path: string) => {
-    if (!path) return;
+    if (!path) {
+      showToast('功能开发中', 'info');
+      return;
+    }
     if (!isLoggedIn) {
       setShowAuthModal(true);
       return;

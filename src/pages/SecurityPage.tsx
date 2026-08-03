@@ -7,7 +7,8 @@ type ModalType = 'operation' | 'loginPassword' | null;
 
 export default function SecurityPage() {
   const hasOpPassword = useStore((s) => s.hasOperationPassword);
-  const setHasOpPassword = useStore((s) => s.setHasOperationPassword);
+  const setStoreOperationPassword = useStore((s) => s.setOperationPassword);
+  const showToast = useStore((s) => s.showToast);
 
   const [modalType, setModalType] = useState<ModalType>(null);
   const [code, setCode] = useState('');
@@ -38,7 +39,8 @@ export default function SecurityPage() {
 
   const handleSubmitOperationPassword = () => {
     if (operationPassword.length === 6 && /^\d{6}$/.test(operationPassword) && confirmCode === operationPassword) {
-      setHasOpPassword(true);
+      setStoreOperationPassword(operationPassword);
+      showToast('设置成功', 'success');
       setShowSuccess(true);
       setTimeout(closeModal, 1500);
     }
@@ -72,7 +74,10 @@ export default function SecurityPage() {
         <div className="neu-divider" />
 
         {/* 账号注销 */}
-        <div className="flex items-center justify-between h-14 px-4 cursor-pointer">
+        <div
+          className="flex items-center justify-between h-14 px-4 cursor-pointer"
+          onClick={() => showToast('功能开发中', 'info')}
+        >
           <span className="text-base font-semibold text-neu-text-primary">账号注销</span>
           <ChevronRight size={18} className="text-neu-text-muted" />
         </div>

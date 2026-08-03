@@ -1,32 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import NavBar from '@/components/common/NavBar';
 import { useStore } from '@/store/useStore';
 
 export default function CheckInPage() {
-  const [count, setCount] = useState(0);
   const [animating, setAnimating] = useState(false);
-  const [checkedInToday, setCheckedInToday] = useState(false);
+  const [displayCount, setDisplayCount] = useState(0);
+  const checkInDays = useStore((s) => s.checkInDays);
+  const lastCheckInDate = useStore((s) => s.lastCheckInDate);
+  const checkIn = useStore((s) => s.checkIn);
+  const showToast = useStore((s) => s.showToast);
   const isVerified = useStore((s) => s.isVerified);
   const setShowVerifyModal = useStore((s) => s.setShowVerifyModal);
 
-  useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
-    const saved = localStorage.getItem('checkin');
-    if (saved) {
-      const { date, days } = JSON.parse(saved);
-      if (date === today) {
-        setCheckedInToday(true);
-        setCount(days);
-      } else {
-        // 检查是否连续签到（昨天）
-        const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-        if (date === yesterday) {
-          setCount(days);
-        }
-        // 如果断签则重置为0
-      }
-    }
-  }, []);
+  const today = new Date().toISOString().split('T')[0];
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  const checkedInToday = lastCheckInDate === today;
+  // 是否连续签到（昨日签到过）
+  const isContinuous = lastCheckInDate === yesterday;
+  // 断签时基础显示为 0（与原逻辑一致），已签到或连续时显示 store 中的天数
+  const baseCount = checkedInToday || isContinuous ? checkInDays : 0;
 
   const handleCheckIn = () => {
     if (!isVerified) {
@@ -35,23 +27,26 @@ export default function CheckInPage() {
     }
     if (animating || checkedInToday) return;
     setAnimating(true);
-    const target = count + 1;
-    let current = count;
+    // 目标值：连续则 +1，断签则重置为 1
+    const target = isContinuous ? checkInDays + 1 : 1;
+    let current = baseCount;
+    setDisplayCount(current);
     const timer = setInterval(() => {
       current += 1;
       if (current >= target) {
         clearInterval(timer);
-        setCount(target);
+        checkIn();
+        setDisplayCount(target);
         setAnimating(false);
-        setCheckedInToday(true);
-        const today = new Date().toISOString().split('T')[0];
-        localStorage.setItem('checkin', JSON.stringify({ date: today, days: target }));
+        showToast('签到成功', 'success');
       } else {
-        setCount(current);
+        setDisplayCount(current);
       }
     }, 100);
   };
 
+  // 动画中显示 displayCount，否则显示 baseCount
+  const count = animating ? displayCount : baseCount;
   const digits = String(count).padStart(3, '0').split('');
 
   return (

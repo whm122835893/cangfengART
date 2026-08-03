@@ -9,16 +9,23 @@ export default function VerificationPage() {
   const isVerified = useStore((s) => s.isVerified);
   const setVerified = useStore((s) => s.setVerified);
   const updateUser = useStore((s) => s.updateUser);
+  const showToast = useStore((s) => s.showToast);
 
   const [name, setName] = useState('');
   const [idNumber, setIdNumber] = useState('');
 
+  const isIdNumberValid = (value: string) => /^\d{17}[\dXx]$/.test(value);
+
   const handleSubmit = () => {
-    if (name && idNumber.length === 18) {
-      updateUser({ realName: name, idNumber });
-      setVerified(true);
-      setTimeout(() => navigate(-1), 1200);
+    if (!name || idNumber.length !== 18) return;
+    if (!isIdNumberValid(idNumber)) {
+      showToast('身份证号格式不正确', 'error');
+      return;
     }
+    updateUser({ realName: name, idNumber: idNumber.toUpperCase() });
+    setVerified(true);
+    showToast('认证成功', 'success');
+    setTimeout(() => navigate(-1), 1200);
   };
 
   if (isVerified) {

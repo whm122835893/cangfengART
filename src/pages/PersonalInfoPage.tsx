@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Copy, ChevronRight } from 'lucide-react';
 import NavBar from '@/components/common/NavBar';
 import { useStore } from '@/store/useStore';
@@ -12,7 +13,24 @@ const listItems = [
 ];
 
 export default function PersonalInfoPage() {
+  const navigate = useNavigate();
   const user = useStore((s) => s.user);
+  const logout = useStore((s) => s.logout);
+  const showToast = useStore((s) => s.showToast);
+
+  const handleCopyWalletAddress = () => {
+    if (!user.walletAddress) {
+      showToast('暂无地址', 'info');
+      return;
+    }
+    navigator.clipboard.writeText(user.walletAddress);
+    showToast('已复制', 'success');
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <div className="page-container bg-neu-bg">
@@ -42,7 +60,7 @@ export default function PersonalInfoPage() {
                     </span>
                   )}
                   {item.type === 'copy' && (
-                    <button className="text-accent-blue">
+                    <button onClick={handleCopyWalletAddress} className="text-accent-blue">
                       <Copy size={18} />
                     </button>
                   )}
@@ -59,7 +77,10 @@ export default function PersonalInfoPage() {
 
       {/* 退出按钮 */}
       <div className="fixed bottom-8 left-0 right-0 px-4 max-w-[430px] mx-auto">
-        <button className="w-full h-12 neu-accent-blue rounded-2xl text-white font-bold text-base">
+        <button
+          onClick={handleLogout}
+          className="w-full h-12 neu-accent-blue rounded-2xl text-white font-bold text-base"
+        >
           退出账号
         </button>
       </div>
