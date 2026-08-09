@@ -20,6 +20,16 @@ const SIZE_MAP: Record<ImageSize, { w: number; h: number }> = {
  */
 export function getImageUrl(rawUrl: string, size: ImageSize = 'cover'): string {
   const { w, h } = SIZE_MAP[size];
+  // 特殊占位：空投类内部 key → 回退到真实藏品图，保证展示时能看到图
+  if (rawUrl === 'nft-badge') {
+    // 徽章 → 用十二生肖·辰龙的图片做占位
+    const fallback = nfts.find((n) => n.id === '7') ?? nfts[0];
+    rawUrl = fallback.image;
+  } else if (rawUrl === 'nft-avatar') {
+    // 头像 → 用牛首铜像图片做占位
+    const fallback = nfts.find((n) => n.id === '6') ?? nfts[0];
+    rawUrl = fallback.image;
+  }
   // Unsplash 图片：替换/追加 w、h、fit 参数
   if (rawUrl.includes('images.unsplash.com')) {
     const base = rawUrl.split('?')[0];
@@ -61,6 +71,9 @@ export const nfts: Nft[] = [
   { id: '6', name: '圆明园牛首铜像', issue: 5000, circulation: 3205, price: 1388, volume: 41, liked: false, image: 'https://images.unsplash.com/photo-1500595046743-cd271d694d30', saleStatus: 'ended', saleStart: '2026-07-18T10:00:00' },
   { id: '7', name: '十二生肖·辰龙', issue: 8000, circulation: 6210, price: 2999, volume: 156, liked: true, image: 'https://images.unsplash.com/photo-1606312619070-d48b4c652a52', saleStatus: 'onsale', saleStart: '2026-07-22T20:00:00' },
   { id: '8', name: '十二生肖·巳蛇', issue: 8000, circulation: 5480, price: 2688, volume: 112, liked: false, image: 'https://images.unsplash.com/photo-1531386151447-fd76ad50012f', saleStatus: 'ended', saleStart: '2026-07-20T10:00:00' },
+  // 空投藏品（不在首页/市场列表展示，仅用于详情页数据支撑）
+  { id: 'airdrop-genesis', name: '创世纪念徽章', issue: 1000, circulation: 1000, price: 0, volume: 0, liked: false, image: 'https://images.unsplash.com/photo-1606312619070-d48b4c652a52', saleStatus: 'ended', saleStart: '2026-08-01T10:00:00' },
+  { id: 'airdrop-opening', name: '开服限定头像', issue: 2000, circulation: 2000, price: 0, volume: 0, liked: false, image: 'https://images.unsplash.com/photo-1500595046743-cd271d694d30', saleStatus: 'ended', saleStart: '2026-08-01T10:00:00' },
 ];
 
 /** 价格格式化：null 显示 '--'，否则显示 '¥xxxx' */
